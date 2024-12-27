@@ -1,0 +1,228 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Pasien;
+use App\Models\Dokter;
+use App\Models\Poli;  // Pastikan model Poli diimpor
+use Illuminate\Support\Facades\Auth;
+class DokterController extends Controller
+{
+
+    public function dashboard()
+{
+    // Dapatkan data dokter dari session
+    $pasiens = Pasien::all(); 
+    $dokterId = session('dokter_id');
+
+    if (!$dokterId) {
+        return redirect()->route('dokter.login')->withErrors(['login' => 'Silakan login terlebih dahulu.']);
+    }
+
+    // Ambil data dokter dan pasien terkait
+    $dokter = Dokter::with('poli')->find($dokterId);
+    //$pasiens = $dokter->pasiens; // Asumsikan ada relasi pasien pada model dokter
+
+    return view('dokter.dashboard', compact('dokter', 'pasiens'));
+}
+
+
+     // Menampilkan Data Dokter
+     public function index()
+     {
+        $pasiens = Pasien::all(); 
+         $dokters = Dokter::with('poli')->get();  // Ambil semua dokter beserta nama poli mereka
+         return view('admin.dokter.index', compact('dokters', 'pasiens'));
+     }
+     public function show(Dokter $dokter)
+{
+    $dokter->load('poli');
+    return view('admin.dokter.show', compact('dokter'));
+}
+
+      // Menampilkan form login dokter
+    public function showLoginForm()
+    {
+        return view('auth.dokter-login');  // Pastikan Anda memiliki view untuk form login dokter
+    }
+
+    // Proses login dokter (opsional jika ingin menggunakan autentikasi)
+    // Proses login dokter
+    // Proses login dokter
+public function login(Request $request)
+{
+    // Validasi input
+    $request->validate([
+        'name' => 'required',
+        'alamat' => 'required',
+    ]);
+
+    // Cari dokter berdasarkan nama dan alamat (password)
+    $dokter = Dokter::where('nama', $request->name)
+                    ->where('alamat', $request->alamat) // Gunakan 'alamat' untuk password
+                    ->first();
+
+    // Periksa apakah data dokter valid
+    if ($dokter) {
+        // Simpan data ke session
+        session(['dokter_id' => $dokter->id, 'dokter_nama' => $dokter->nama]);
+        
+        // Redirect ke dashboard dokter
+        return redirect()->route('dokter.dashboard')->with('success', 'Login berhasil!');
+    }
+
+    // Jika gagal login, kembali ke halaman login dengan pesan error
+    return back()->withErrors(['login' => 'Nama atau password salah!'])->withInput();
+}
+
+    
+
+    // Logout dokter
+    public function logout()
+    {
+        // Hapus session
+        session()->forget(['dokter_id', 'dokter_nama']);
+
+        return redirect()->route('dokter.login')->with('success', 'Logout berhasil!');
+    }
+
+    //menambah data  dokter
+    public function create()
+    {
+        $polis = Poli::all();
+        return view('admin.dokter.create', compact('polis'));
+    }
+
+    // menyimoan data
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required',
+            'alamat' => 'required',
+            'no_hp' => 'required',
+            'id_poli' => 'required|exists:poli,id', // Validasi id_poli
+        ]);
+
+        Dokter::create($request->all());
+        return redirect()->route('dokter.index')->with('success', 'Dokter berhasil ditambahkan.');
+    }
+
+        // edit data dokter
+    public function edit(Dokter $dokter)
+    {
+        $polis = Poli::all();
+        return view('admin.dokter.edit', compact('dokter', 'polis'));
+    }
+
+    //update data dokter
+    public function update(Request $request, Dokter $dokter)
+    {
+        $request->validate([
+            'nama' => 'required',
+            'alamat' => 'required',
+            'no_hp' => 'required',
+            'id_poli' => 'required|exists:poli,id',
+        ]);
+
+        // Update data dokter
+    $dokter->update([
+        'nama' => $request->nama,
+        'alamat' => $request->alamat,
+        'no_hp' => $request->no_hp,
+        'id_poli' => $request->id_poli,
+    ]);
+        return redirect()->route('dokter.index')->withwith('success', 'Data Dokter berhasil diperbarui');
+    }
+
+    public function destroy(Dokter $dokter)
+    {
+        $dokter->delete();
+        return redirect()->route('dokter.index');
+    }
+    
+
+    
+    
+    public function editProfile()
+{
+    $dokterId = session('dokter_id');
+
+    if (!$dokterId) {
+        return redirect()->route('dokter.login')->withErrors(['login' => 'Silakan login terlebih dahulu.']);
+    }
+
+    // Ambil data dokter beserta relasi poli
+    $dokter = Dokter::with('poli')->find($dokterId);
+    if (!$dokter) {
+        return redirect()->route('dokter.dashboard')->withErrors(['error' => 'Data dokter tidak ditemukan.']);
+    }
+
+    // Ambil semua data poli untuk dropdown
+    $polis = Poli::all();
+
+    // Pastikan data poli ada dan dikirimkan ke view
+    return view('dokter.profile.edit-profile', compact('dokter', 'polis'));
+}
+
+    
+public function updateProfile(Request $request)
+{
+    // Ambil ID dokter dari session
+    $dokterId = session('dokter_id');
+
+    // Redirect ke login jika ID dokter tidak ada di session
+    if (!$dokterId) {
+        return redirect()->route('dokter.login')->withErrors(['login' => 'Silakan login terlebih dahulu.']);
+    }
+
+    // Validasi input
+    $request->validate([
+        'nama' => 'required|string|max:255',
+        'no_hp' => 'nullable|string|max:255',
+        'alamat' => 'nullable|string|min:6|confirmed', // Password opsional dengan konfirmasi
+        'id_poli' => 'required|exists:poli,id', // Validasi poli
+    ]);
+
+    // Ambil data dokter
+    $dokter = Dokter::find($dokterId);
+    if (!$dokter) {
+        return redirect()->route('dokter.dashboard')->withErrors(['error' => 'Data dokter tidak ditemukan.']);
+    }
+
+    // Update data dokter
+    $dokter->nama = $request->nama;
+    $dokter->no_hp = $request->no_hp;
+    $dokter->id_poli = $request->id_poli;
+
+    // Update alamat jika diisi
+    if ($request->alamat) {
+        $dokter->alamat = $request->alamat;
+    }
+
+    // Simpan perubahan
+    $dokter->save();
+
+    // Redirect ke halaman profil dengan pesan sukses
+    return redirect()->route('dokter.profile.profile')->with('success', 'Profil berhasil diperbarui.');
+}
+
+
+public function profile()
+{
+    $dokterId = session('dokter_id');
+    if (!$dokterId) {
+        return redirect()->route('dokter.login')->withErrors(['login' => 'Silakan login terlebih dahulu.']);
+    }
+
+    // Muat data dokter beserta relasi poli
+    $dokter = Dokter::with('poli')->find($dokterId);
+    if (!$dokter) {
+        return redirect()->route('dokter.dashboard')->withErrors(['error' => 'Data dokter tidak ditemukan.']);
+    }
+
+    return view('dokter.profile.profile', compact('dokter'));
+}
+
+
+}

@@ -1,0 +1,13 @@
+body {
+    background-color: #f8f9fa; /* Warna latar belakang */
+}
+.hero-section {
+    padding: 50px 0;
+}
+.card {
+    border: none;
+    border-radius: 15px;
+}
+.btn {
+    border-radius: 25px;
+}

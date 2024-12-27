@@ -1,0 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Button styles */
+.btn-danger {
+    background-color: darkblue;
+    border-radius: 10px;
+    border-color: darkblue;
+    padding: 10px 55px;
+    color: white;
+}
+
+.btn-outline-danger,
+.btn-outline-white {
+    background-color: transparent;
+    border-radius: 10px;
+    padding: 10px 45px;
+}
+
+.btn-outline-danger {
+    border-color: darkblue;
+    color: darkblue;
+}
+
+.btn-outline-white {
+    border-color: white;
+    color: white;
+}
+
+
+/* Color of the links BEFORE scroll */
+.navbar-scroll .nav-link,
+.navbar-scroll .navbar-toggler-icon,
+.navbar-scroll .navbar-brand {
+    color: #fff;
+}
+
+/* Color of the links AFTER scroll */
+.navbar-scrolled .nav-link,
+.navbar-scrolled .navbar-toggler-icon,
+.navbar-scrolled .navbar-brand {
+    color: #fff;
+}
+
+/* Color of the navbar AFTER scroll */
+.navbar-scroll,
+.navbar-scrolled {
+    background-color: #cbbcb1;
+}
+
+.mask-custom {
+    backdrop-filter: blur(5px);
+    background-color: rgba(255, 255, 255, .15);
+}
+
+.navbar-brand {
+    font-size: 1.75rem;
+    letter-spacing: 3px;
+}
+
+
+/* Navbar styles */
+.nav-item .nav-link {
+    font-size: 18px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.nav-dropdown{
+    font-size: 14px;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+.scroll-nav-active {
+    background-color: white;
+    box-shadow: 1px 1px 11px -1px rgba(1, 1, 1, 0.08);
+}
+
+.text-nav-active {
+    color: black;
+}
+
+/* Hero styles */
+#hero {
+    background-image: url("../../assets/images/Dishub-Kota-Semarang.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 800px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-title {
+    text-align: center;
+}
+
+.hero-text {
+    font-size: 80px;
+    font-weight: 600;
+}
+
+/* Join styles */
+.strip {
+    height: 5px;
+    width: 40px;
+    background-color: darkblue;
+}
+
+/* Video styles */
+#video {
+    background-image: url("../../assets/images/kotasemarang.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 700px;
+}
+
+/* Section Foto styles */
+.section-foto {
+    background-attachment: fixed;
+    background-position: top;
+    background-size: cover;
+    height: 750px;
+    width: 100%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.section-foto img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    display: block;
+    margin: auto;
+}
+
+@media (max-width: 767px) {
+    .section-foto {
+        height: 100%;
+    }
+
+    .section-foto img {
+        height: auto;
+    }
+}
+
+.parallax {
+    background-image: url(../../assets/images/kotalama.jpg);
+}
+
+.strip-putih {
+    height: 5px;
+    width: 40px;
+    background-color: white;
+}
+
+.image-row {
+    display: flex;
+    gap: 10px; /* Jarak antar gambar */
+    justify-content: center; /* Mengatur posisi: bisa 'flex-start', 'center', atau 'flex-end' */
+    align-items: center; /* Mengatur perataan vertikal */
+}
+
+.image-row img {
+    width: 300px; /* Atur lebar gambar */
+    height: 300px; /* Atur tinggi gambar */
+    object-fit: cover; /* Memotong gambar agar sesuai ukuran tanpa distorsi */
+    border: 1px; /* Opsional: Tambahkan border */
+}
+
+/*section layanan*/
+.home_layanan {
+    display: flex; /* Menyusun elemen secara horizontal */
+    gap: 20px; /* Jarak antara dua bagian */
+}
+
+.home_layanan .content {
+    flex: 1; /* Membagi area secara merata */
+    max-width: 48%; /* Atur lebar maksimum untuk kedua bagian */
+}
+
+.home_layanan img {
+    max-width: 50%; /* Gambar akan menyesuaikan ukuran elemen */
+    height: auto; /* Mempertahankan rasio gambar */
+    margin-bottom: 15px; /* Jarak gambar dengan teks */
+}
+
+@media (max-width: 768px) {
+    .home_layanan {
+        flex-direction: column; /* Tumpuk elemen secara vertikal untuk layar kecil */
+    }
+
+    .home_layanan .content {
+        max-width: 100%; /* Lebar penuh pada layar kecil */
+    }
+}
+
+.card {
+    width: 100%; /* Lebar penuh container */
+    max-width: 1400px; /* Atur lebar maksimum */
+    margin: 0 auto; /* Pusatkan card */
+    padding: 20px; /* Ruang di dalam card */
+    position: relative; /* Agar backdrop-filter dapat bekerja dengan benar */
+    background: rgba(255, 255, 255, 0.6); /* Memberikan latar belakang semi-transparan */
+}
+
+
+/*CSS Update
+/* Custom Berita Section */
+#berita .card {
+    transition: all 0.3s ease-in-out;
+}
+
+#berita .card:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+#berita .header-berita h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+#berita .footer-berita .btn {
+    font-size: 1rem;
+    padding: 10px 10px;
+}
+/* Kotak di Sekitar Side News */
+.side-news-box {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.side-news-box:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Style tambahan untuk berita kecil */
+.side-news-box .card {
+    margin-bottom: 15px;
+}
+
+.side-news-box .card img {
+    border-radius: 4px;
+}
+
+/* Custom Slider Styles */
+#sideNewsCarousel .carousel-inner {
+    max-height: 120px; /* Membatasi tinggi slider */
+}
+
+#sideNewsCarousel .carousel-item img {
+    height: 80px; /* Sesuaikan ukuran gambar */
+    object-fit: cover;
+}
+
+#sideNewsCarousel .card-body h6 {
+    font-size: 0.9rem; /* Ukuran teks judul */
+    margin-bottom: 5px;
+}
+
+#sideNewsCarousel .carousel-control-prev-icon,
+#sideNewsCarousel .carousel-control-next-icon {
+    filter: invert(1); /* Mengubah warna icon navigasi */
+}
+
+.custom-dropdown {
+    font-size: 0.5rem; /* Adjust the size as needed */
+}
+
+.navbar-brand img {
+    border-radius: 50%;
+}
+
+.nav-link:hover {
+    color: #007bff;
+}
