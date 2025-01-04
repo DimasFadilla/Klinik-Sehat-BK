@@ -17,28 +17,43 @@ class JadwalPeriksaController extends Controller
 
     // Menyimpan jadwal periksa baru
     public function store(Request $request)
-{
-    $request->validate([
-        'hari' => 'required|string',
-        'jam_mulai' => 'required|date_format:H:i',
-        'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-    ]);
-
-    $id_dokter = session('dokter_id'); // Ambil ID dokter dari session
-
-    if (!$id_dokter) {
-        return redirect()->route('dokter.login')->withErrors(['login' => 'Silakan login terlebih dahulu.']);
+    {
+        $request->validate([
+            'hari' => 'required|string',
+            'jam_mulai' => 'required|date_format:H:i',
+            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+        ]);
+    
+        $id_dokter = session('dokter_id'); // Ambil ID dokter dari session
+    
+        if (!$id_dokter) {
+            return redirect()->route('dokter.login')->withErrors(['login' => 'Silakan login terlebih dahulu.']);
+        }
+    
+        // Periksa apakah sudah ada jadwal yang bertabrakan dengan jadwal baru
+        $existingSchedule = JadwalPeriksa::where('id_dokter', $id_dokter)
+            ->where('hari', $request->hari)
+            ->where(function ($query) use ($request) {
+                $query->whereBetween('jam_mulai', [$request->jam_mulai, $request->jam_selesai])
+                    ->orWhereBetween('jam_selesai', [$request->jam_mulai, $request->jam_selesai]);
+            })
+            ->exists();
+    
+        if ($existingSchedule) {
+            return redirect()->back()->withErrors(['error' => 'Jadwal bertabrakan dengan jadwal lain pada hari dan waktu yang sama.']);
+        }
+    
+        // Menyimpan jadwal baru jika tidak ada tabrakan
+        $jadwal = new JadwalPeriksa();
+        $jadwal->id_dokter = $id_dokter; // Set ID dokter
+        $jadwal->hari = $request->hari;
+        $jadwal->jam_mulai = $request->jam_mulai;
+        $jadwal->jam_selesai = $request->jam_selesai;
+        $jadwal->save();
+    
+        return redirect()->route('dokter.jadwal.index')->with('success', 'Jadwal berhasil ditambahkan.');
     }
-
-    $jadwal = new JadwalPeriksa();
-    $jadwal->id_dokter = $id_dokter; // Set ID dokter
-    $jadwal->hari = $request->hari;
-    $jadwal->jam_mulai = $request->jam_mulai;
-    $jadwal->jam_selesai = $request->jam_selesai;
-    $jadwal->save();
-
-    return redirect()->route('dokter.jadwal.index')->with('success', 'Jadwal berhasil ditambahkan.');
-}
+    
 
     //     public function store(Request $request)
 // {
