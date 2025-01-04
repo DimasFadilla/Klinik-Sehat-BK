@@ -31,6 +31,18 @@ class Dokter extends Model
       {
           return $this->hasMany(JadwalPeriksa::class, 'id_dokter');
       }
+      public function daftarPoli()
+    {
+    return $this->hasManyThrough(
+        DaftarPoli::class,
+        JadwalPeriksa::class,
+        'id_dokter', // Foreign key di tabel Jadwal Periksa
+        'id_jadwal', // Foreign key di tabel Daftar Poli
+        'id',        // Primary key di tabel Dokter
+        'id'         // Primary key di tabel Jadwal Periksa
+    );
+    }
+
   
       // Relasi Dokter ke Pasien (jika diperlukan)
     

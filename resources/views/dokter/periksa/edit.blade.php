@@ -2,67 +2,92 @@
 
 @section('content')
 <div class="container mt-5">
-    <div class="card shadow-lg border-0">
+    <div class="card">
         <div class="card-header bg-primary text-white">
-            <h3 class="mb-0">Periksa Pasien</h3>
+            <h4>Form Pemeriksaan Pasien</h4>
         </div>
         <div class="card-body">
             <form action="{{ route('periksa.update', $pasien->id) }}" method="POST">
                 @csrf
                 @method('PUT')
 
-                <div class="form-group mb-3">
-                    <label for="nama_pasien" class="form-label">Nama Pasien</label>
-                    <input type="text" class="form-control" id="nama_pasien" value="{{ $pasien->pasien->nama }}" disabled>
+                <!-- Informasi Pasien -->
+                <div class="form-group">
+                    <label for="nama_pasien"><strong>Nama Pasien</strong></label>
+                    <input type="text" id="nama_pasien" class="form-control" value="{{ $pasien->pasien->nama }}" readonly>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label for="tgl_periksa" class="form-label">Tanggal Periksa</label>
-                    <input type="datetime-local" name="tgl_periksa" id="tgl_periksa" class="form-control" required>
+                <!-- Informasi Dokter -->
+                <div class="form-group">
+                    <label for="nama_dokter"><strong>Nama Dokter</strong></label>
+                    <input type="text" id="nama_dokter" class="form-control" value="{{ $pasien->jadwalPeriksa->dokter->nama }}" readonly>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label for="catatan" class="form-label">Catatan</label>
-                    <textarea name="catatan" id="catatan" class="form-control" rows="4" required></textarea>
+                <!-- Keluhan Pasien -->
+                <div class="form-group">
+                    <label for="keluhan"><strong>Keluhan Pasien</strong></label>
+                    <textarea id="keluhan" class="form-control" rows="3" readonly>{{ $pasien->keluhan }}</textarea>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label for="obat" class="form-label">Obat</label>
-                    <input type="text" name="obat[]" id="obat" class="form-control" placeholder="Nama Obat" required>
-                    <small class="form-text text-muted">Masukkan obat yang diberikan pada pasien.</small>
+                <!-- Tanggal Periksa -->
+                <div class="form-group">
+                    <label for="tgl_periksa"><strong>Tanggal Periksa</strong></label>
+                    <input type="date" id="tgl_periksa" name="tgl_periksa" class="form-control" required>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label for="biaya_periksa" class="form-label">Biaya Periksa</label>
-                    <input type="number" name="biaya_periksa" id="biaya_periksa" class="form-control" required>
-                    <small class="form-text text-muted">Masukkan biaya periksa pasien.</small>
+                <!-- Catatan Pemeriksaan -->
+                <div class="form-group">
+                    <label for="catatan"><strong>Catatan Pemeriksaan</strong></label>
+                    <textarea id="catatan" name="catatan" class="form-control" rows="4" placeholder="Masukkan catatan pemeriksaan..." required></textarea>
                 </div>
-                
-                <div class="form-group mb-3">
-                        <label for="obat" class="form-label">Obat</label>
-                <div id="obat-container">
-                    <input type="text" name="obat[]" class="form-control mb-2" placeholder="Nama Obat" required>
-                </div>
-                <button type="button" id="add-obat" class="btn btn-link">Tambah Obat</button>
-            </div>
 
-                <div class="d-flex justify-content-between align-items-center">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                    <a href="{{ route('periksa.index') }}" class="btn btn-outline-secondary">Kembali</a>
+                <!-- Pilih Obat -->
+                <div class="form-group">
+                    <label for="obat"><strong>Pilih Obat</strong></label>
+                    <select id="obat" name="obat[]" class="form-control" multiple>
+                        @foreach($obatList as $obat)
+                            <option value="{{ $obat->id }}">{{ $obat->nama_obat }} - Rp {{ number_format($obat->harga, 0, ',', '.') }}</option>
+                        @endforeach
+                    </select>
+                    <small class="text-muted">Pilih obat yang diberikan kepada pasien (Tekan <kbd>Ctrl</kbd> untuk memilih lebih dari satu).</small>
+                </div>
+
+                <!-- Total Biaya -->
+                <div class="form-group">
+                    <label for="biaya_periksa"><strong>Biaya Periksa</strong></label>
+                    <input type="text" id="biaya_periksa" name="biaya_periksa" class="form-control" readonly placeholder="Total biaya akan dihitung otomatis">
+                </div>
+
+                <!-- Tombol Aksi -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Simpan Pemeriksaan</button>
+                    <a href="{{ route('dokter.periksa.index') }}" class="btn btn-secondary">Kembali</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Script untuk menghitung total biaya -->
 <script>
-    document.getElementById('add-obat').addEventListener('click', function() {
-        var container = document.getElementById('obat-container');
-        var input = document.createElement('input');
-        input.type = 'text';
-        input.name = 'obat[]';
-        input.classList.add('form-control', 'mb-2');
-        input.placeholder = 'Nama Obat';
-        container.appendChild(input);
+    document.addEventListener('DOMContentLoaded', function () {
+        const obatSelect = document.getElementById('obat');
+        const biayaPeriksaInput = document.getElementById('biaya_periksa');
+
+        // Biaya jasa dokter tetap
+        const biayaJasaDokter = 150000;
+
+        // Event listener saat obat dipilih/dihapus
+        obatSelect.addEventListener('change', function () {
+            let selectedOptions = Array.from(obatSelect.selectedOptions);
+            let totalHargaObat = selectedOptions.reduce((sum, option) => {
+                let harga = parseInt(option.textContent.split('- Rp ')[1].replace(/\./g, ''));
+                return sum + harga;
+            }, 0);
+
+            // Hitung total biaya periksa
+            biayaPeriksaInput.value = new Intl.NumberFormat('id-ID').format(biayaJasaDokter + totalHargaObat);
+        });
     });
 </script>
 @endsection

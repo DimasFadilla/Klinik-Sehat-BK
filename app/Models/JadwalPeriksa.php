@@ -24,4 +24,8 @@ class JadwalPeriksa extends Model
     {
         return $this->belongsTo(Dokter::class, 'id_dokter');
     }
+    public function poli()
+{
+    return $this->belongsTo(Poli::class, 'id_poli');
+}
 }

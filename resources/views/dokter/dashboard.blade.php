@@ -2,6 +2,7 @@
 
 @section('content')
 <div id="content">
+  <!-- Navbar dan Informasi Dasar -->
   <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
     <form class="form-inline">
       <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
@@ -9,12 +10,11 @@
       </button>
     </form>
     <ul class="navbar-nav ml-auto">
-      
       <div class="topbar-divider d-none d-sm-block"></div>
       <li class="nav-item dropdown no-arrow">
         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="mr-2 d-none d-lg-inline text-gray-600 small">Dokter {{ session('dokter_nama') }}</span>
-          <img class="img-profile rounded-circle" src="{{ asset('img/profile') }}">
+          <img class="img-profile rounded-circle" src="{{ asset('img/undraw_profile.svg') }}">
         </a>
         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
           <a class="dropdown-item" href="{{ route('dokter.logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -34,11 +34,7 @@
 
     <div class="card shadow mb-4">
       <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Data Pasien Anda
-          <span>
-            <a href="{{ route('pasien.create') }}" class="btn btn-primary ml-4 font-weight-bold">+ Tambah Pasien</a>
-          </span>
-        </h6>
+        <h6 class="m-0 font-weight-bold text-primary">Data Pasien Anda</h6>
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -47,40 +43,25 @@
               <tr>
                 <th>Nama Pasien</th>
                 <th>Alamat Pasien</th>
-                <th>Tanggal Berobat</th>
+                <th>Jadwal</th>
                 <th>Keluhan</th>
-                <th>Nama Dokter</th>
                 <th>Obat</th>
-                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              @foreach ($pasiens as $pasien)
+              @forelse ($pasiens as $pasien)
               <tr>
-                <td>{{ $pasien->nama }}</td>
-                <td>{{ $pasien->alamat }}</td>
-                <td>{{ $pasien->tgl_datang }}</td>
-                <td>{{ $pasien->keluhan_pasien }}</td>
-                <td>
-                    @if ($pasien->dokter)
-                        {{ $pasien->dokter->dokter_nama }}
-                    @else
-                        Dokter tidak tersedia
-                    @endif
-                </td>
-
-                <td>{{ $pasien->nama_obat }}</td>
-                <td>
-                  <a href="{{ route('pasien.edit', $pasien->id) }}" class="btn btn-warning">Edit</a>
-                  <a href="{{ route('pasien.show', $pasien->id) }}" class="btn btn-success">Info</a>
-                  <form action="{{ route('pasien.destroy', $pasien->id) }}" method="POST" class="d-inline">
-                    @method('DELETE')
-                    @csrf
-                    <button class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this patient?')">Delete</button>
-                  </form>
-                </td>
+                <td>{{ $pasien['nama'] }}</td>
+                <td>{{ $pasien['alamat'] }}</td>
+                <td>{{ $pasien['jadwal'] }}</td>
+                <td>{{ $pasien['keluhan'] }}</td>
+                <td>{{ $pasien['obat'] }}</td>
               </tr>
-              @endforeach
+              @empty
+              <tr>
+                <td colspan="5" class="text-center">Belum ada data pasien</td>
+              </tr>
+              @endforelse
             </tbody>
           </table>
         </div>

@@ -7,21 +7,24 @@ use App\Models\JadwalPeriksa;
 use App\Models\Dokter;
 use App\Models\Pasien;
 use App\Models\Poli;
+use Illuminate\Support\Facades\Log;
+
 
 class DaftarPoliController extends Controller
 {
     // Menampilkan daftar pendaftaran poli untuk pasien yang sedang login
     public function index()
-    {
-        $pasienId = session('pasien_id'); // Bisa menggunakan Auth::id() jika menggunakan autentikasi
-    
-        // Ambil data pendaftaran poli yang terkait dengan pasien
-        $pemeriksaan = DaftarPoli::with('jadwalPeriksa.dokter.poli')
-            ->where('id_pasien', $pasienId)
-            ->get();
-    
-        return view('daftar.index', compact('pemeriksaan'));
-    }
+{
+    $pasienId = session('pasien_id'); // ID pasien dari session
+
+    // Ambil data pendaftaran poli, termasuk relasi yang diperlukan
+    $pemeriksaan = DaftarPoli::with(['jadwalPeriksa.dokter', 'jadwalPeriksa.poli'])
+        ->where('id_pasien', $pasienId)
+        ->get();
+
+    return view('daftar.index', compact('pemeriksaan'));
+}
+
     
 
     // Fungsi untuk menampilkan form pendaftaran poli
@@ -35,51 +38,70 @@ class DaftarPoliController extends Controller
 
     // Menyimpan pendaftaran poli
     public function store(Request $request)
-    {
-        $request->validate([
-            'id_poli' => 'required|exists:polis,id',
-            'id_dokter' => 'required|exists:dokters,id',
-            'id_jadwal' => 'required|exists:jadwal_periksas,id',
-            'keluhan' => 'required|string|max:255',
-        ]);
-    
-        // Ambil ID pasien dari session atau auth
-        $pasienId = session('pasien_id'); // Bisa menggunakan Auth::id() jika menggunakan autentikasi
-    
-        // Hitung nomor antrian berdasarkan jadwal
-        $lastAntrian = DaftarPoli::where('id_jadwal', $request->id_jadwal)->max('no_antrian');
-        $nextAntrian = $lastAntrian ? $lastAntrian + 1 : 1;
-    
-        // Simpan data pendaftaran poli
-        DaftarPoli::create([
-            'id_pasien' => $pasienId,
-            'id_poli' => $request->id_poli,
-            'id_dokter' => $request->id_dokter,
-            'id_jadwal' => $request->id_jadwal,
-            'keluhan' => $request->keluhan,
-            'no_antrian' => $nextAntrian,
-        ]);
-    
-        return redirect()->route('daftar.index')->with('success', 'Pendaftaran poli berhasil.');
-    }
-    
-    public function getDokterByPoli($id_poli)
 {
-    $dokters = Dokter::where('id_poli', $id_poli)->get();
-    if ($dokters->isEmpty()) {
-        return response()->json(['message' => 'Tidak ada dokter di poli ini.'], 404);
-    }
-    return response()->json($dokters);
+    $request->validate([
+        'id_poli' => 'required|exists:poli,id',
+        'id_jadwal' => 'required|exists:jadwal_periksa,id',
+        'keluhan' => 'required|string|max:255',
+    ]);
+
+    $pasienId = session('pasien_id'); // ID pasien dari session
+
+    // Ambil jadwal yang dipilih
+    $jadwal = JadwalPeriksa::findOrFail($request->id_jadwal);
+
+    // Hitung nomor antrian untuk hari yang sama
+    $lastAntrian = DaftarPoli::where('id_jadwal', $jadwal->id)
+        ->whereDate('created_at', now()->toDateString()) // Membatasi pada hari yang sama
+        ->max('no_antrian');
+
+    $nextAntrian = $lastAntrian ? $lastAntrian + 1 : 1;
+
+    // Simpan data pendaftaran poli
+    DaftarPoli::create([
+        'id_pasien' => $pasienId,
+        'id_poli' => $request->id_poli,
+        'id_jadwal' => $request->id_jadwal,
+        'keluhan' => $request->keluhan,
+        'no_antrian' => $nextAntrian,
+    ]);
+
+    return redirect()->route('daftar.index')->with('success', 'Pendaftaran poli berhasil.');
 }
 
-public function getJadwalByDokter($id_dokter)
-{
-    $jadwals = JadwalPeriksa::where('id_dokter', $id_dokter)->get();
-    if ($jadwals->isEmpty()) {
-        return response()->json(['message' => 'Tidak ada jadwal untuk dokter ini.'], 404);
+    
+    public function getDokterByPoli($id_poli)
+    {
+        Log::info('getDokterByPoli dipanggil dengan id_poli: ' . $id_poli);
+    
+        $dokters = Dokter::where('id_poli', $id_poli)->get();
+    
+        if ($dokters->isEmpty()) {
+            Log::info('Tidak ada dokter untuk Poli ID ' . $id_poli);
+            return response()->json(['message' => 'Tidak ada dokter di poli ini.'], 404);
+        }
+    
+        Log::info('Data dokter ditemukan: ' . $dokters->toJson());
+        return response()->json($dokters);
     }
-    return response()->json($jadwals);
-}
+    
+    
+
+    
+    public function getJadwalByPoli($id_poli)
+    {
+        $jadwals = JadwalPeriksa::whereHas('dokter', function ($query) use ($id_poli) {
+            $query->where('id_poli', $id_poli);
+        })->get();
+    
+        if ($jadwals->isEmpty()) {
+            return response()->json(['message' => 'Tidak ada jadwal untuk poli ini.'], 404);
+        }
+    
+        return response()->json($jadwals);
+    }
+    
+    
 
 
  

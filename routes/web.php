@@ -20,7 +20,7 @@ use \App\Http\Kernel;
 // Welcome and Database Check Routes
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome'); 
 
 Route::get('/check-db', function () {
     return DB::connection()->getDatabaseName();
@@ -31,11 +31,12 @@ Route::get('/login', [AdminController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AdminController::class, 'login']);
 Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-Route::get('/pasien/create', [PasienController::class, 'create'])->name('pasien.create');
-Route::get('/pasien/{pasien}/edit', [PasienController::class, 'edit'])->name('admin.pasien.edit');
-Route::put('/pasien/{id}', [PasienController::class, 'update'])->name('pasien.update');
+Route::get('/admin/pasien/create', [PasienController::class, 'create'])->name('admin.pasien.create');
+Route::get('/admin/pasien/{pasien}/edit', [PasienController::class, 'edit'])->name('admin.pasien.edit');
+Route::put('/admin/pasien/{id}', [PasienController::class, 'update'])->name('admin.pasien.update');
 Route::delete('/pasien/{pasien}', [PasienController::class, 'destroy'])->name('pasien.destroy');
-Route::post('/pasien', [PasienController::class, 'store'])->name('pasien.store');
+Route::post('/admin/pasien', [PasienController::class, 'store'])->name('pasien.store');
+Route::get('/admin/pasien', [PasienController::class, 'index'])->name('admin.pasien.index');
 
 Route::prefix('admin')->name('admin.')->group(function () {
    
@@ -69,9 +70,13 @@ Route::get('dokter/{dokter}', [DokterController::class, 'show'])->name('dokter.s
 Route::get('/dokter', [DokterController::class, 'index'])->name('dokter.index');
 Route::post('/dokter/logout', [DokterController::class, 'logout'])->name('dokter.logout');
 
-//dokter profile
+// Dokter Profile Routes
+// Halaman untuk melihat profil dokter
 Route::get('/dokter/profile/profile', [DokterController::class, 'profile'])->name('dokter.profile.profile');
+// Halaman untuk mengedit profil dokter
 Route::get('/dokter/profile/edit-profile', [DokterController::class, 'editProfile'])->name('dokter.profile.edit-profile');
+// Proses update profil dokter
+Route::put('/dokter/profile/update-profile', [DokterController::class, 'updateProfile'])->name('dokter.update-profile');
 
 
 
@@ -89,10 +94,12 @@ Route::get('/periksa', [PeriksaController::class, 'index'])->name('dokter.periks
 Route::get('/dokter/periksa/{id}/edit', [PeriksaController::class, 'edit'])->name('dokter.periksa.edit');
 Route::put('/dokter/periksa/{id}', [PeriksaController::class, 'update'])->name('periksa.update');
 Route::post('/dokter/logout', [DokterController::class, 'logout'])->name('dokter.logout');
-//detail periksa
-Route::get('/detailperiksa/{id}', [DetailPeriksaController::class, 'index'])->name('detailperiksa.index');
-Route::get('/detailperiksa/show/{pasien}', [DetailPeriksaController::class, 'show'])->name('detailperiksa.show');
+Route::get('/dokter/periksa/{id}/detail', [PeriksaController::class, 'detail'])->name('dokter.periksa.detail');
 
+
+//detail periksa
+Route::get('/detailperiksa/{id_pasien}', [DetailPeriksaController::class, 'index'])->name('detailperiksa.index');
+Route::get('/jadwal-by-poli/{id_poli}', [DaftarPoliController::class, 'getJadwalByPoli']);
 
 
 // Pasien Routes
@@ -102,12 +109,12 @@ Route::post('pasien/register', [PasienController::class, 'register'])->name('pas
 Route::get('pasien/login', [PasienController::class, 'showLoginForm'])->name('pasien.login');
 Route::post('pasien/login', [PasienController::class, 'login'])->name('pasien.login.post');
 Route::post('pasien/logout', [PasienController::class, 'logout'])->name('pasien.logout');
-Route::get('/pasien', [PasienController::class, 'index'])->name('pasien.index');
+// Route::get('/admin/pasien', [PasienController::class, 'index'])->name('admin.pasien.index');
 Route::get('pasien/{id}', [PasienController::class, 'show'])->name('pasien.detail');
-Route::get('/pasien/create', [PasienController::class, 'create'])->name('pasien.create');
- Route::get('/pasien/{pasien}/edit', [PasienController::class, 'edit'])->name('pasien.edit');
- Route::delete('/pasien/{pasien}', [PasienController::class, 'destroy'])->name('pasien.destroy');
- Route::post('/pasien', [PasienController::class, 'store'])->name('pasien.store');
+// //Route::get('/pasien/create', [PasienController::class, 'create'])->name('pasien.create');
+//  Route::get('/pasien/{pasien}/edit', [PasienController::class, 'edit'])->name('pasien.edit');
+//  Route::delete('/pasien/{pasien}', [PasienController::class, 'destroy'])->name('pasien.destroy');
+//  Route::post('/pasien', [PasienController::class, 'store'])->name('pasien.store');
 Route::get('pasien/{id}', [PasienController::class, 'show'])->name('pasien.show');
 
 //daftarpoli

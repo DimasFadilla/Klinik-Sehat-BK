@@ -21,6 +21,7 @@
             </div>
 
             <div class="flex items-center justify-end mt-4">
+            <a href="{{ route('welcome') }}" class="btn btn-primary">Back to Welcome</a>
                 <button class="ml-3" type="submit">Masuk</button>
             </div>
         </form>

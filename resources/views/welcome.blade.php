@@ -30,7 +30,7 @@ $mappp= "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2552.7933967249073
     <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
         <div class="container">
             <a class="navbar-brand" href="#page-top"><img src="{{ asset('img/logo.png') }}" style=”float:left;
-                    width="55";height="55"” />KLINIK</a>
+                    width="55";height="55"” /> KLINIK SEHAT </a>
             <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded" type="button"
                 data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive"
                 aria-expanded="false" aria-label="Toggle navigation">
@@ -61,15 +61,14 @@ $mappp= "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2552.7933967249073
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded"
-                            href="#portfolio">Tentang
-                            kami</a></li>
-                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded"
+                            href="#portfolio">Layanan Klinik</a></li>
+                    <!-- <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded"
                             href="#about">Pendaftaran</a>
-                    </li>
+                    </li> -->
                     <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded"
                             href="#contact">Alamat</a></li>
-                    <li><a href="{{ route('dokter.login') }}" class="nav-item mx-0 mx-lg-1"><i class="fas fa-user-md" class="nav-link py-3 px-0 px-lg-3 rounded"></i> Login Dokter</a></li>
-                <li><a href="{{ route('pasien.login') }}" class="nav-item mx-0 mx-lg-1"><i class="fas fa-user"class="nav-link py-3 px-0 px-lg-3 rounded"></i> Login Pasien</a></li>
+                    <li class="nav-item mx-0 mx-lg-1"><a href="{{ route('dokter.login') }}" class="nav-link py-3 px-0 px-lg-3 rounded" ><i class="fas fa-user-md" ></i> Login Dokter</a></li>
+                <li class="nav-item mx-0 mx-lg-1"><a href="{{ route('pasien.login') }}" class="nav-link py-3 px-0 px-lg-3 rounded"><i class="fas fa-user"></i> Login Pasien</a></li>
             </ul>
                 </ul>
             </div>
@@ -92,14 +91,14 @@ $mappp= "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2552.7933967249073
                 <div class="divider-custom-line"></div>
             </div>
             <!-- Masthead Subheading-->
-            <p class="masthead-subheading font-weight-light mb-0">Semraang</p>
+            <p class="masthead-subheading font-weight-light mb-0">SEMARANG</p>
         </div>
     </header>
     <!--------------------------------------------------------Bagian Isi Konten----------------------------------------------------------------------------------->
     <section class="page-section portfolio" id="portfolio">
         <div class="container">
             <!-- Portfolio Section Heading-->
-            <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Tentang Kami</h2>
+            <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Layanan Klinik</h2>
             <!-- Icon Divider-->
             <div class="divider-custom">
                 <div class="divider-custom-line"></div>
@@ -116,7 +115,7 @@ $mappp= "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2552.7933967249073
                             <div class="portfolio-item-caption-content text-center text-white"><i
                                     class="fas fa-plus fa-3x"></i></div>
                         </div>
-                        <img class="img-fluid" src="img/dalam2.jpg" alt="..." />
+                        <img class="img-fluid" src="img/umum.jpg" alt="..." />
                     </div>
                 </div>
                 <!-- Portfolio Item 2-->
@@ -127,7 +126,7 @@ $mappp= "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2552.7933967249073
                             <div class="portfolio-item-caption-content text-center text-white"><i
                                     class="fas fa-plus fa-3x"></i></div>
                         </div>
-                        <img class="img-fluid" src="img/dalam1.jpg" alt="..." />
+                        <img class="img-fluid" src="img/jantung.jpg" alt="..." />
                     </div>
                 </div>
                 <!-- Portfolio Item 3-->
@@ -138,7 +137,7 @@ $mappp= "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2552.7933967249073
                             <div class="portfolio-item-caption-content text-center text-white"><i
                                     class="fas fa-plus fa-3x"></i></div>
                         </div>
-                        <img class="img-fluid" src="img/luar1.jpg" alt="..." />
+                        <img class="img-fluid" src="img/gigi.jpg" alt="..." />
                     </div>
                 </div>
 
@@ -150,15 +149,15 @@ $mappp= "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2552.7933967249073
     <section class="page-section bg-primary text-white mb-0" id="about">
         <div class="container">
             <!--------------------------------------------------------Bagian Tombol Login dan daftar----------------------------------------------------------------------------------->
-            <h2 class="page-section-heading text-center text-uppercase text-white">Pendaftaran</h2>
+            <!-- <h2 class="page-section-heading text-center text-uppercase text-white">Pendaftaran</h2> -->
             <!-- Icon Divider-->
-            <div class="divider-custom divider-light">
+            <!-- <div class="divider-custom divider-light">
                 <div class="divider-custom-line"></div>
                 <div class="divider-custom-icon"><i class="fas fa-pencil"></i></div>
                 <div class="divider-custom-line"></div>
-            </div>
+            </div> -->
             <!--------------------------------------------------------Daftar sebagai Pasien----------------------------------------------------------------------------------->
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col-lg-4 ms-auto">
                     <button class="btn btn-xl btn-outline-light" data-bs-toggle="modal"
                         data-bs-target="#daftarPasien">
@@ -174,16 +173,16 @@ $mappp= "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2552.7933967249073
                             Cek Antrian disini
                         </a></p>
                 </div>
-            </div>
+            </div> -->
             <!--------------------------------------------------------Login Sebagai Staff Klinik----------------------------------------------------------------------------------->
-            <div class="text-center mt-4">
+            <!-- <div class="text-center mt-4">
                 <a class="btn btn-xl btn-outline-light" href="/dashboard">
                     <i class="fas fa-user me-2"></i>
                     Masuk Sebagai Staff
                 </a>
             </div>
         </div>
-    </section>
+    </section> -->
     <!--------------------------------------------------------Kontak Klinik----------------------------------------------------------------------------------->
     <section class="page-section" id="contact">
         <div class="container">
@@ -238,7 +237,7 @@ $mappp= "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2552.7933967249073
                 <div class="col-lg-4">
                     <h4 class="text-uppercase mb-4">Tentang Klinik</h4>
                     <p class="lead mb-0">
-                        Klinik {{ env('APP_NAME') }} dibangun sejak tahun 2002 yang berada di kecamatan Muarajawa - Kutai
+                         {{ env('APP_NAME') }} dibangun sejak tahun 2024 yang berada di kecamatan Muarajawa - Kutai
                         Kartanegara
                     </p>
                 </div>
@@ -247,7 +246,7 @@ $mappp= "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2552.7933967249073
     </footer>
     <!--------------------------------------------------------copyright----------------------------------------------------------------------------------->
     <div class="copyright py-4 text-center text-white">
-        <div class="container"><small>Copyright &copy; Klinik {{ env('APP_NAME') }} 2022</small></div>
+        <div class="container"><small>Copyright &copy;  {{ env('APP_NAME') }} 2024</small></div>
     </div>
     <!-- Portfolio Modals-->
 

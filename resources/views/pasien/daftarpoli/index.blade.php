@@ -2,7 +2,34 @@
 
 @section('content')
 <div class="container my-5">
+      <!-- Navbar dan Informasi Dasar -->
+  <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+    <form class="form-inline">
+      <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+        <i class="fa fa-bars"></i>
+      </button>
+    </form>
+    <ul class="navbar-nav ml-auto">
+      <div class="topbar-divider d-none d-sm-block"></div>
+      <li class="nav-item dropdown no-arrow">
+        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ session('pasien_nama') }}</span>
+          <img class="img-profile rounded-circle" src="{{ asset('img/undraw_profile.svg') }}">
+        </a>
+        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+          <a class="dropdown-item" href="{{ route('pasien.logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            {{ __('Logout') }}
+          </a>
+          <form id="logout-form" action="{{ route('pasien.logout') }}" method="POST" class="d-none">
+            @csrf
+          </form>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
     <!-- Judul Halaman -->
+     
     <h2 class="text-center mb-4">Pendaftaran Poli</h2>
 
     @if(session('success'))

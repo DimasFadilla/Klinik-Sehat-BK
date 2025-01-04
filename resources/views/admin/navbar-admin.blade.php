@@ -4,7 +4,7 @@
             <!-- Logo di Pojok Kiri -->
             <a href="{{ route('admin.dashboard') }}" class="navbar-brand d-flex align-items-center">
                 <img src="{{ asset('img/logo.png') }}" alt="logo" style="width: 40px; height: 40px;" class="me-2">
-                <h1 class="m-0 text-uppercase text-primary">Admin</h1>
+                <h1 class="m-0 text-uppercase" style="color: navy;">Admin</h1>
             </a>
             <button
                 class="navbar-toggler"
@@ -25,7 +25,7 @@
                     <a href="{{ route('dokter.index') }}" class="nav-item nav-link">Mengelola Dokter</a>
 
                     <!-- Mengelola Pasien -->
-                    <a href="{{ route('pasien.index') }}" class="nav-item nav-link">Mengelola Pasien</a>
+                    <a href="{{ route('admin.pasien.index') }}" class="nav-item nav-link">Mengelola Pasien</a>
 
                     <!-- Mengelola Obat -->
                     <a href="{{ route('obat.index') }}" class="nav-item nav-link">Mengelola Obat</a>

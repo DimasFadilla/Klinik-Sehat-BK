@@ -46,7 +46,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end">
-                    <a href="{{  route('pasien.index') }}" class="btn btn-secondary me-2">
+                    <a href="{{  route('admin.pasien.index') }}" class="btn btn-secondary me-2">
                         <i class="fas fa-arrow-left"></i> Batal
                     </a>
                     <button type="submit" class="btn btn-primary">

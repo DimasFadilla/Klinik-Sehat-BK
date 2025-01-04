@@ -18,6 +18,7 @@ class Periksa extends Model
         'tgl_periksa',
         'catatan',
         'biaya_periksa',
+        'keluhan',
     ];
 
     public function daftarPoli()
@@ -28,6 +29,11 @@ class Periksa extends Model
     public function detailPeriksa()
     {
         return $this->hasMany(DetailPeriksa::class, 'id_periksa');
+
+    }
+    public function pasien()
+    {
+        return $this->belongsTo(Pasien::class, 'id_pasien');
     }
 
 }

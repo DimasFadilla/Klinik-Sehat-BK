@@ -11,21 +11,39 @@ class DokterController extends Controller
 {
 
     public function dashboard()
-{
-    // Dapatkan data dokter dari session
-    $pasiens = Pasien::all(); 
-    $dokterId = session('dokter_id');
-
-    if (!$dokterId) {
-        return redirect()->route('dokter.login')->withErrors(['login' => 'Silakan login terlebih dahulu.']);
+    {
+        // Dapatkan ID dokter dari session
+        $dokterId = session('dokter_id');
+    
+        if (!$dokterId) {
+            return redirect()->route('dokter.login')->withErrors(['login' => 'Silakan login terlebih dahulu.']);
+        }
+    
+        // Ambil data dokter dan pasien yang terkait
+        $dokter = Dokter::with(['poli', 'daftarPoli.pasien'])->find($dokterId);
+    
+        if (!$dokter) {
+            return redirect()->route('dokter.login')->withErrors(['login' => 'Data dokter tidak ditemukan.']);
+        }
+    
+        // Ambil daftar pasien dari relasi
+        $pasiens = $dokter->daftarPoli->map(function ($daftarPoli) {
+            return [
+                'nama' => $daftarPoli->pasien->nama ?? 'Tidak ada data',
+                'alamat' => $daftarPoli->pasien->alamat ?? 'Tidak ada data',
+                'jadwal' => $daftarPoli->jadwalPeriksa 
+                    ? $daftarPoli->jadwalPeriksa->hari . ' @ ' . $daftarPoli->jadwalPeriksa->jam_mulai . ' - ' . $daftarPoli->jadwalPeriksa->jam_selesai
+                    : 'Jadwal tidak tersedia',
+                'keluhan' => $daftarPoli->keluhan ?? 'Tidak ada keluhan',
+                'obat' => $daftarPoli->periksa && $daftarPoli->periksa->detailPeriksa 
+                    ? $daftarPoli->periksa->detailPeriksa->pluck('obat.nama_obat')->join(', ') 
+                    : 'Tidak ada obat',
+            ];
+        });
+        
+        return view('dokter.dashboard', compact('dokter', 'pasiens'));
     }
-
-    // Ambil data dokter dan pasien terkait
-    $dokter = Dokter::with('poli')->find($dokterId);
-    //$pasiens = $dokter->pasiens; // Asumsikan ada relasi pasien pada model dokter
-
-    return view('dokter.dashboard', compact('dokter', 'pasiens'));
-}
+    
 
 
      // Menampilkan Data Dokter
@@ -87,7 +105,7 @@ public function login(Request $request)
         return redirect()->route('dokter.login')->with('success', 'Logout berhasil!');
     }
 
-    //menambah data  dokter
+    //menambah data  dokter oleh admin
     public function create()
     {
         $polis = Poli::all();
@@ -108,39 +126,38 @@ public function login(Request $request)
         return redirect()->route('dokter.index')->with('success', 'Dokter berhasil ditambahkan.');
     }
 
-        // edit data dokter
+        // edit data dokter oleh admin
     public function edit(Dokter $dokter)
     {
         $polis = Poli::all();
         return view('admin.dokter.edit', compact('dokter', 'polis'));
     }
 
-    //update data dokter
+    //update data dokter oelh admin
     public function update(Request $request, Dokter $dokter)
-    {
-        $request->validate([
-            'nama' => 'required',
-            'alamat' => 'required',
-            'no_hp' => 'required',
-            'id_poli' => 'required|exists:poli,id',
-        ]);
+{
+    $request->validate([
+        'nama' => 'required|string|max:255',
+        'alamat' => 'required|string|max:255',
+        'no_hp' => 'required|regex:/^[0-9]+$/|min:10|max:15', // Hanya angka, minimal 10, maksimal 15 karakter
+        'id_poli' => 'required|exists:poli,id',
+    ], [
+        'no_hp.regex' => 'Nomor HP hanya boleh berisi angka.', // Pesan error khusus untuk regex
+        'no_hp.min' => 'Nomor HP harus minimal 10 digit.',
+        'no_hp.max' => 'Nomor HP tidak boleh lebih dari 15 digit.',
+    ]);
 
-        // Update data dokter
+    // Update data dokter
     $dokter->update([
         'nama' => $request->nama,
         'alamat' => $request->alamat,
         'no_hp' => $request->no_hp,
         'id_poli' => $request->id_poli,
     ]);
-        return redirect()->route('dokter.index')->withwith('success', 'Data Dokter berhasil diperbarui');
-    }
 
-    public function destroy(Dokter $dokter)
-    {
-        $dokter->delete();
-        return redirect()->route('dokter.index');
-    }
-    
+    return redirect()->route('dokter.profile.profile')->with('success', 'Profil berhasil diperbarui.');
+}
+
 
     
     
@@ -165,7 +182,6 @@ public function login(Request $request)
     return view('dokter.profile.edit-profile', compact('dokter', 'polis'));
 }
 
-    
 public function updateProfile(Request $request)
 {
     // Ambil ID dokter dari session
@@ -180,7 +196,7 @@ public function updateProfile(Request $request)
     $request->validate([
         'nama' => 'required|string|max:255',
         'no_hp' => 'nullable|string|max:255',
-        'alamat' => 'nullable|string|min:6|confirmed', // Password opsional dengan konfirmasi
+        'alamat' => 'nullable|string|min:6|confirmed', // Alamat dengan konfirmasi
         'id_poli' => 'required|exists:poli,id', // Validasi poli
     ]);
 
@@ -195,9 +211,13 @@ public function updateProfile(Request $request)
     $dokter->no_hp = $request->no_hp;
     $dokter->id_poli = $request->id_poli;
 
-    // Update alamat jika diisi
+    // Update alamat jika diisi dan konfirmasi alamat cocok
     if ($request->alamat) {
-        $dokter->alamat = $request->alamat;
+        if ($request->alamat === $request->alamat_confirmation) {
+            $dokter->alamat = $request->alamat;
+        } else {
+            return back()->withErrors(['alamat_confirmation' => 'Alamat dan konfirmasi alamat tidak cocok.']);
+        }
     }
 
     // Simpan perubahan
@@ -206,7 +226,6 @@ public function updateProfile(Request $request)
     // Redirect ke halaman profil dengan pesan sukses
     return redirect()->route('dokter.profile.profile')->with('success', 'Profil berhasil diperbarui.');
 }
-
 
 public function profile()
 {
@@ -223,6 +242,7 @@ public function profile()
 
     return view('dokter.profile.profile', compact('dokter'));
 }
+
 
 
 }

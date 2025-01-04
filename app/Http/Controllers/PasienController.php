@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pasien;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; // Ini benar
+use Illuminate\Support\Facades\Log;
 
 
 class PasienController extends Controller
@@ -93,24 +94,39 @@ class PasienController extends Controller
 
     // Proses registrasi pasien
     public function register(Request $request)
-    {
-        $request->validate([
-            'nama' => 'required',
-            'alamat' => 'required',
-            'no_ktp' => 'required|numeric|unique:pasien',
-            'no_hp' => 'required',
-            'no_rm' => 'required|unique:pasien',
-        ]);
-    
-        dd($request->all());
+{
+    // Log input untuk debugging
+    Log::info('Data registrasi pasien diterima: ', $request->all());
 
-        try {
-            Pasien::create($request->all());
-            return redirect()->route('pasien.login')->with('success', 'Registrasi berhasil. Silakan login.');
-        } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()]);
-        }
+    // dd($request->all());
+
+    // Validasi input
+    $request->validate([
+        'nama' => 'required',
+        'alamat' => 'required',
+        'no_ktp' => 'required|numeric|unique:pasien',
+        'no_hp' => 'required',
+        'no_rm' => 'required|unique:pasien',
+    ]);
+
+    try {
+        // Simpan data ke database
+        Pasien::create($request->all());
+
+        // Log keberhasilan
+        Log::info('Data pasien berhasil disimpan.');
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('pasien.login')->with('success', 'Registrasi berhasil. Silakan login.');
+    } catch (\Exception $e) {
+        // Log error
+        Log::error('Error saat registrasi pasien: ' . $e->getMessage());
+
+        // Redirect dengan pesan error
+        return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()]);
     }
+}
+
 
     // Tampilkan form tambah pasien
     public function create()
@@ -131,7 +147,7 @@ class PasienController extends Controller
     
         Pasien::create($request->all());
     
-        return redirect()->route('pasien.index')->with('success', 'Pasien berhasil ditambahkan.');
+        return redirect()->route('admin.pasien.index')->with('success', 'Pasien berhasil ditambahkan.');
     }
     
 
@@ -141,9 +157,10 @@ class PasienController extends Controller
         return view('admin.pasien.edit', compact('pasien'));
     }
 
-    // Update data pasien
+    // Update data pasien pada admin
     public function update(Request $request, Pasien $pasien)
     {
+        // Validasi input
         $request->validate([
             'nama' => 'required',
             'alamat' => 'required',
@@ -151,17 +168,35 @@ class PasienController extends Controller
             'no_hp' => 'required',
             'no_rm' => 'required|unique:pasien,no_rm,' . $pasien->id,
         ]);
-
-        $pasien->update($request->all());
-
+    
+        // Log data setelah validasi berhasil
+        Log::info('Validasi berhasil, data yang akan diupdate:', $request->all());
+    
+        try {
+            // Proses update data pasien
+            $isUpdated = $pasien->update($request->all());
+            
+            // Debugging untuk melihat apakah update berhasil
+            if ($isUpdated) {
+                Log::info('Data pasien berhasil diupdate:', $pasien->toArray());
+            } else {
+                Log::error('Update gagal untuk pasien:', ['pasien_id' => $pasien->id]);
+            }
+        } catch (\Exception $e) {
+            // Log error jika terjadi exception
+            Log::error('Error saat melakukan update data pasien:', ['error' => $e->getMessage()]);
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()]);
+        }        
+    
         return redirect()->route('admin.pasien.index')->with('success', 'Pasien berhasil diperbarui.');
     }
+    
 
     // Hapus data pasien
     public function destroy(Pasien $pasien)
     {
         $pasien->delete();
-        return redirect()->route('pasien.index')->with('success', 'Pasien berhasil dihapus.');
+        return redirect()->route('admin.pasien.index')->with('success', 'Pasien berhasil dihapus.');
     }
 
     public function dashboard()
@@ -169,9 +204,9 @@ class PasienController extends Controller
         $pasienId = session('pasien_id'); // Menggunakan pasien_id dari session
         $pasien = Pasien::findOrFail($pasienId);
         
-        // Pastikan relasi pemeriksaan sudah didefinisikan di model Pasien
-        $pemeriksaan = $pasien->daftarPoli; // Misalnya, jika pemeriksaan adalah relasi hasMany
-    
+        $pasien = Pasien::with(['daftarPoli.periksa.detailPeriksa.obat'])->findOrFail($pasienId);
+
+        $pemeriksaan = $pasien->daftarPoli->flatMap->periksa; // Mendapatkan semua pemeriksaan
        
 
         return view('pasien.dashboard', compact('pasien', 'pemeriksaan'));

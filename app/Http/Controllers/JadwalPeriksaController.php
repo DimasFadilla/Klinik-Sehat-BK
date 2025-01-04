@@ -82,25 +82,38 @@ class JadwalPeriksaController extends Controller
     // Mengupdate jadwal periksa
     public function update(Request $request, JadwalPeriksa $jadwal)
     {
-        // Validasi input jika diperlukan
+        // Validasi input, tetapi buat opsional agar field yang kosong tidak memengaruhi data
         $request->validate([
-            'hari' => 'required|string|in:senin,selasa,rabu,kamis,jumat,sabtu,minggu', // jika hanya satu hari yang diterima
-            'jam_mulai' => 'required|date_format:H:i',
-            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+            'hari' => 'nullable|string|in:senin,selasa,rabu,kamis,jumat,sabtu,minggu',
+            'jam_mulai' => 'nullable|date_format:H:i',
+            'jam_selesai' => 'nullable|date_format:H:i|after:jam_mulai',
         ]);
-        
     
-        // Update data jadwal dengan input form
-        $jadwal->hari = $request->input('hari');
-        $jadwal->jam_mulai = $request->input('jam_mulai');
-        $jadwal->jam_selesai = $request->input('jam_selesai');
+        try {
+            // Periksa apakah input ada sebelum memperbarui
+            if ($request->has('hari')) {
+                $jadwal->hari = $request->input('hari');
+            }
     
-        // Simpan perubahan
-        $jadwal->save();
+            if ($request->has('jam_mulai')) {
+                $jadwal->jam_mulai = $request->input('jam_mulai');
+            }
     
-        // Redirect ke halaman yang sesuai setelah update
-        return redirect()->route('dokter.jadwal.index')->with('success', 'Jadwal berhasil diupdate');
+            if ($request->has('jam_selesai')) {
+                $jadwal->jam_selesai = $request->input('jam_selesai');
+            }
+    
+            // Simpan perubahan ke database
+            $jadwal->save();
+    
+            // Redirect ke halaman yang sesuai dengan pesan sukses
+            return redirect()->route('dokter.jadwal.index')->with('success', 'Jadwal berhasil diupdate');
+        } catch (\Exception $e) {
+            // Tangkap error dan redirect dengan pesan error
+            return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+        }
     }
+    
     
 
     // Menghapus jadwal periksa

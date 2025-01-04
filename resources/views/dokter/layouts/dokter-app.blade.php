@@ -12,6 +12,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/fontawesome.min.css" rel="stylesheet">
   <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
   <link href="{{ asset('css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+
 </head>
 
 <body id="page-top">
@@ -60,16 +61,8 @@
             </a>
         </li>
 
-        <!-- <li class="nav-item">
-              <@if(isset($pasien) && $pasien)
-          <a class="nav-link collapsed" href="{{ route('detailperiksa.index', ['id' => $pasien->id]) }}">
-              <i class="fas fa-stethoscope"></i>
-              <span>Riwayat Pasien</span>
-          </a>
-      @else
-          <p>Pasien tidak ditemukan!</p>
-      @endif
-        </li> -->
+        
+
 
         <!-- Logout -->
         <li class="nav-item">
@@ -113,5 +106,6 @@
   <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
   <script src="{{ asset('js/dataTables.bootstrap4.min.js') }}"></script>
   <script src="{{ asset('js/datatables-demo.js') }}"></script>
+  <script src="{{ asset('js/jquery.min.js') }}"></script>
 </body>
 </html>

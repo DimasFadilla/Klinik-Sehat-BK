@@ -38,7 +38,7 @@
                                 <td>{{ $pasien->no_hp }}</td>
                                 <td>{{ $pasien->no_rm }}</td>
                                 <td>
-                                    <a href="{{ route('pasien.edit', $pasien->id) }}" class="btn btn-warning btn-sm me-2">
+                                    <a href="{{ route('admin.pasien.edit', $pasien->id) }}" class="btn btn-warning btn-sm me-2">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
                                     <form action="{{ route('pasien.destroy', $pasien->id) }}" method="POST" style="display:inline;">
