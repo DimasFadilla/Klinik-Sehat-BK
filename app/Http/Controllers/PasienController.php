@@ -14,8 +14,8 @@ class PasienController extends Controller
     {
         // Validasi input
         $request->validate([
-            'name' => 'required',
-            'alamat' => 'required',
+            'name' => 'required|string|max:255',
+            'alamat' => 'required|string|max:255',
         ]);
     
         // Cari pasien berdasarkan nama dan alamat
@@ -159,37 +159,40 @@ class PasienController extends Controller
 
     // Update data pasien pada admin
     public function update(Request $request, Pasien $pasien)
-    {
-        // Validasi input
-        $request->validate([
-            'nama' => 'required',
-            'alamat' => 'required',
-            'no_ktp' => 'required|numeric|unique:pasien,no_ktp,' . $pasien->id,
-            'no_hp' => 'required',
-            'no_rm' => 'required|unique:pasien,no_rm,' . $pasien->id,
-        ]);
+{
+    // Validasi input
+    $request->validate([
+        'nama' => 'required',
+        'alamat' => 'required',
+        'no_ktp' => 'required|numeric|unique:pasien,no_ktp,' . $pasien->id, // pastikan id pasien sudah ada dalam url
+        'no_hp' => 'required',
+        'no_rm' => 'required|unique:pasien,no_rm,' . $pasien->id, // pastikan id pasien sudah ada dalam url
+    ]);
     
-        // Log data setelah validasi berhasil
-        Log::info('Validasi berhasil, data yang akan diupdate:', $request->all());
+    // Log data setelah validasi berhasil
+    Log::info('Validasi berhasil, data yang akan diupdate:', $request->all());
     
-        try {
-            // Proses update data pasien
-            $isUpdated = $pasien->update($request->all());
-            
-            // Debugging untuk melihat apakah update berhasil
-            if ($isUpdated) {
-                Log::info('Data pasien berhasil diupdate:', $pasien->toArray());
-            } else {
-                Log::error('Update gagal untuk pasien:', ['pasien_id' => $pasien->id]);
-            }
-        } catch (\Exception $e) {
-            // Log error jika terjadi exception
-            Log::error('Error saat melakukan update data pasien:', ['error' => $e->getMessage()]);
-            return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()]);
-        }        
-    
-        return redirect()->route('admin.pasien.index')->with('success', 'Pasien berhasil diperbarui.');
+    try {
+        // Pilih field yang akan diupdate, hanya yang relevan saja
+        $updatedData = $request->only(['nama', 'alamat', 'no_ktp', 'no_hp', 'no_rm']);
+        
+        // Proses update data pasien
+        $isUpdated = $pasien->update($updatedData);
+        
+        // Debugging untuk melihat apakah update berhasil
+        if ($isUpdated) {
+            Log::info('Data pasien berhasil diupdate:', $updatedData);
+            return redirect()->route('admin.pasien.index', $pasien->id)->with('success', 'Data pasien berhasil diupdate.');
+        } else {
+            return back()->withErrors(['error' => 'Gagal memperbarui data pasien.']);
+        }
+    } catch (\Exception $e) {
+        // Tangani error jika terjadi masalah saat update
+        Log::error('Error saat mengupdate data pasien: ' . $e->getMessage());
+        return back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data pasien.']);
     }
+}
+
     
 
     // Hapus data pasien

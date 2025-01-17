@@ -33,14 +33,14 @@ Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 Route::get('/admin/pasien/create', [PasienController::class, 'create'])->name('admin.pasien.create');
 Route::get('/admin/pasien/{pasien}/edit', [PasienController::class, 'edit'])->name('admin.pasien.edit');
-Route::put('/admin/pasien/{id}', [PasienController::class, 'update'])->name('admin.pasien.update');
+Route::put('/admin/pasien/{pasien}', [PasienController::class, 'update'])->name('admin.pasien.update');
 Route::delete('/pasien/{pasien}', [PasienController::class, 'destroy'])->name('pasien.destroy');
 Route::post('/admin/pasien', [PasienController::class, 'store'])->name('pasien.store');
 Route::get('/admin/pasien', [PasienController::class, 'index'])->name('admin.pasien.index');
 
-Route::prefix('admin')->name('admin.')->group(function () {
+// Route::prefix('admin')->name('admin.')->group(function () {
    
-});
+// });
 
 Route::get('/jadwal-dokter', function () {
     $jadwal = [
