@@ -13,22 +13,28 @@
                 <!-- Nama Obat -->
                 <div class="mb-3">
                     <label for="nama_obat" class="form-label">Nama Obat</label>
-                    <input type="text" class="form-control" id="nama_obat" name="nama_obat" 
-                           value="{{ $obat->nama_obat }}" required>
+                    <input type="text" class="form-control @error('nama_obat') is-invalid @enderror" id="nama_obat" name="nama_obat" value="{{ old('nama_obat', $obat->nama_obat) }}" required>
+                    @error('nama_obat')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <!-- Kemasan -->
                 <div class="mb-3">
                     <label for="kemasan" class="form-label">Kemasan</label>
-                    <input type="text" class="form-control" id="kemasan" name="kemasan" 
-                           value="{{ $obat->kemasan }}" required>
+                    <input type="text" class="form-control @error('kemasan') is-invalid @enderror" id="kemasan" name="kemasan" value="{{ old('kemasan', $obat->kemasan) }}" required>
+                    @error('kemasan')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <!-- Harga -->
                 <div class="mb-3">
                     <label for="harga" class="form-label">Harga</label>
-                    <input type="number" class="form-control" id="harga" name="harga" 
-                           value="{{ $obat->harga }}" required>
+                    <input type="number" class="form-control @error('harga') is-invalid @enderror" id="harga" name="harga" value="{{ old('harga', $obat->harga) }}" required>
+                    @error('harga')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <!-- Tombol Aksi -->

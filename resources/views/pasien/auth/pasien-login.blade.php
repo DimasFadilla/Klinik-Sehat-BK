@@ -28,7 +28,7 @@
                 </div>
                 <div class="form-group">
                     <label for="alamat">Alamat</label>
-                    <input type="text" class="form-input" id="alamat" name="alamat" placeholder="Enter your alamat" required>
+                    <input type="password" class="form-input" id="alamat" name="alamat" placeholder="Enter your alamat" required>
                 </div>
 
                 <div class="d-flex justify-content-between">

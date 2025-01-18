@@ -118,9 +118,13 @@ public function login(Request $request)
         $request->validate([
             'nama' => 'required',
             'alamat' => 'required',
-            'no_hp' => 'required',
-            'id_poli' => 'required|exists:poli,id', // Validasi id_poli
-        ]);
+            'no_hp' => 'required|regex:/^[0-9]+$/|min:10|max:15', // Hanya angka, minimal 10, maksimal 15 karakter
+        'id_poli' => 'required|exists:poli,id',
+    ], [
+        'no_hp.regex' => 'Nomor HP hanya boleh berisi angka.', // Pesan error khusus untuk regex
+        'no_hp.min' => 'Nomor HP harus minimal 10 digit.',
+        'no_hp.max' => 'Nomor HP tidak boleh lebih dari 15 digit.',
+    ]);
 
         Dokter::create($request->all());
         return redirect()->route('dokter.index')->with('success', 'Dokter berhasil ditambahkan.');
@@ -155,8 +159,20 @@ public function login(Request $request)
         'id_poli' => $request->id_poli,
     ]);
 
-    return redirect()->route('dokter.profile.profile')->with('success', 'Profil berhasil diperbarui.');
+    return redirect()->route('dokter.index')->with('success', 'Profil berhasil diperbarui.');
 }
+
+    // Di dalam DokterController
+
+public function destroy(Dokter $dokter)
+{
+    // Hapus dokter yang dipilih
+    $dokter->delete();
+
+    // Redirect dengan pesan sukses
+    return redirect()->route('dokter.index')->with('success', 'Dokter berhasil dihapus.');
+}
+
 
 
     

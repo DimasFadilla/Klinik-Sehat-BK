@@ -13,15 +13,35 @@
                 <!-- Input Nama Poli -->
                 <div class="mb-3">
                     <label for="nama_poli" class="form-label fw-bold">Nama Poli</label>
-                    <input type="text" name="nama_poli" class="form-control" id="nama_poli" 
-                           required placeholder="Masukkan Nama Poli">
+                    <input 
+                        type="text" 
+                        name="nama_poli" 
+                        id="nama_poli" 
+                        class="form-control @error('nama_poli') is-invalid @enderror" 
+                        value="{{ old('nama_poli') }}" 
+                        required 
+                        placeholder="Masukkan Nama Poli">
+                    @error('nama_poli')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
                 </div>
 
                 <!-- Input Keterangan -->
                 <div class="mb-3">
                     <label for="keterangan" class="form-label fw-bold">Keterangan</label>
-                    <textarea name="keterangan" class="form-control" id="keterangan" rows="3" 
-                              placeholder="Masukkan Keterangan"></textarea>
+                    <textarea 
+                        name="keterangan" 
+                        id="keterangan" 
+                        rows="3" 
+                        class="form-control @error('keterangan') is-invalid @enderror" 
+                        placeholder="Masukkan Keterangan">{{ old('keterangan') }}</textarea>
+                    @error('keterangan')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
                 </div>
 
                 <!-- Tombol Submit -->

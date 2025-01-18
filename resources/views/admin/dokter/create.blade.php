@@ -26,6 +26,7 @@
                 <div class="mb-3">
                     <label for="no_hp" class="form-label">Nomor HP</label>
                     <input type="text" name="no_hp" id="no_hp" class="form-control" required>
+                    <small id="phone-help" class="form-text text-danger" style="display: none;">Format nomor tidak valid. Pastikan nomor dimulai dengan 08 atau 62 dan memiliki 8-12 digit.</small>
                 </div>
 
                 <!-- Input Poli -->
@@ -52,4 +53,19 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('no_hp').addEventListener('input', function(event) {
+        var phoneNumber = event.target.value.replace(/[^0-9]/g, ''); // Hanya angka
+        var regex = /^(08|62)[0-9]{8,12}$/;
+        
+        var message = document.getElementById('phone-help');
+        if (!regex.test(phoneNumber)) {
+            message.style.display = 'block';
+            message.innerHTML = 'Format nomor tidak valid. Pastikan nomor dimulai dengan 08 atau 62 dan memiliki 8-12 digit.';
+        } else {
+            message.style.display = 'none';
+        }
+    });
+</script>
 @endsection

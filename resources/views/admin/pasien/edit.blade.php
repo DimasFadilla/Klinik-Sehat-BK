@@ -37,20 +37,50 @@
                 <!-- Field Alamat -->
                 <div class="mb-3">
                     <label for="alamat" class="form-label">Alamat</label>
-                    <input type="text" class="form-control" id="alamat" name="alamat" value="{{  $pasien->alamat }}" required>
+                    <input type="text" class="form-control" id="alamat" name="alamat" value="{{ $pasien->alamat }}" required>
                 </div>
 
                 <!-- Field No. KTP -->
                 <div class="mb-3">
                     <label for="no_ktp" class="form-label">No. KTP</label>
-                    <input type="text" class="form-control" id="no_ktp" name="no_ktp" value="{{  $pasien->no_ktp }}" required>
+                    <input type="text" class="form-control" id="no_ktp" name="no_ktp" value="{{ $pasien->no_ktp }}" required>
                 </div>
 
                 <!-- Field No. HP -->
                 <div class="mb-3">
                     <label for="no_hp" class="form-label">No. HP</label>
-                    <input type="text" class="form-control" id="no_hp" name="no_hp" value="{{  $pasien->no_hp }}" required>
+                    <input type="text" class="form-control @error('no_hp') is-invalid @enderror" id="no_hp" name="no_hp" value="{{ old('no_hp') }}" required>
+                    
+                    @error('no_hp')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
+
+                    <small class="form-text text-muted">
+                        Contoh format yang benar: <strong>08xxxxxxxxxx</strong> atau <strong>62xxxxxxxxxx</strong> (tanpa spasi atau karakter lain).
+                    </small>
+
+                    <!-- Menambahkan elemen untuk menampilkan pesan error ketika format tidak valid -->
+                    <div id="phone-help" style="display: none; color: red;"></div>
                 </div>
+
+                <script>
+                    document.getElementById('no_hp').addEventListener('input', function(event) {
+                        var phoneNumber = event.target.value.replace(/[^0-9]/g, ''); // Menghapus karakter selain angka
+                        var regex = /^(08|62)[0-9]{8,12}$/; // Regex untuk format nomor HP
+                        
+                        var message = document.getElementById('phone-help');
+                        if (!regex.test(phoneNumber)) {
+                            message.style.display = 'block';
+                            message.innerHTML = 'Format nomor tidak valid. Pastikan nomor dimulai dengan 08 atau 62 dan memiliki 8-12 digit.';
+                            message.style.color = 'red';
+                        } else {
+                            message.style.display = 'none';
+                        }
+                    });
+                </script>
+
 
                 <!-- Field No. RM -->
                 <div class="mb-3">

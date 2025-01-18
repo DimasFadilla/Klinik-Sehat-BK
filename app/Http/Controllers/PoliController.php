@@ -23,16 +23,18 @@ class PoliController extends Controller
 
     // Menyimpan Data Poli
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'nama_poli' => 'required|string|max:255',
-            'keterangan' => 'nullable|string|max:255',
-        ]);
+{
+    $validated = $request->validate([
+        'nama_poli' => 'required|string|max:255|unique:poli,nama_poli',
+        'keterangan' => 'nullable|string|max:255',
+    ], [
+        'nama_poli.unique' => 'Nama poli sudah digunakan. Silakan masukkan nama yang berbeda.',
+    ]);
 
-        Poli::create($validated); // Menyimpan data poli ke database
+    Poli::create($validated); // Menyimpan data poli ke database
 
-        return redirect()->route('poli.index')->with('success', 'Poli berhasil ditambahkan.');
-    }
+    return redirect()->route('poli.index')->with('success', 'Poli berhasil ditambahkan.');
+}
 
     // Menampilkan Form untuk Mengupdate Poli
     public function edit($id)
@@ -48,22 +50,25 @@ class PoliController extends Controller
 
     // Mengupdate Data Poli
     public function update(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'nama_poli' => 'required|string|max:255',
-            'keterangan' => 'nullable|string|max:255',
-        ]);
+{
+    $validated = $request->validate([
+        'nama_poli' => 'required|string|max:255|unique:poli,nama_poli,' . $id,
+        'keterangan' => 'nullable|string|max:255',
+    ], [
+        'nama_poli.unique' => 'Nama poli sudah digunakan. Silakan masukkan nama yang berbeda.',
+    ]);
 
-        $poli = Poli::find($id);
+    $poli = Poli::find($id);
 
-        if (!$poli) {
-            return redirect()->route('poli.index')->with('error', 'Poli tidak ditemukan.');
-        }
-
-        $poli->update($validated); // Mengupdate data poli
-
-        return redirect()->route('poli.index')->with('success', 'Poli berhasil diperbarui.');
+    if (!$poli) {
+        return redirect()->route('poli.index')->with('error', 'Poli tidak ditemukan.');
     }
+
+    $poli->update($validated); // Mengupdate data poli
+
+    return redirect()->route('poli.index')->with('success', 'Poli berhasil diperbarui.');
+}
+
 
     // Menghapus Data Poli
     public function destroy($id)

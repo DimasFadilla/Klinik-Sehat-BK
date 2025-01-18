@@ -72,7 +72,7 @@
             <td>
                 @if($item->jadwalPeriksa)
                     {{ $item->jadwalPeriksa->hari }}
-                    @ {{ $item->jadwalPeriksa->jam_mulai }} - {{ $item->jadwalPeriksa->jam_selesai }}
+                    Jam {{ $item->jadwalPeriksa->jam_mulai }} - {{ $item->jadwalPeriksa->jam_selesai }}
                 @else
                     Tidak ada jadwal
                 @endif

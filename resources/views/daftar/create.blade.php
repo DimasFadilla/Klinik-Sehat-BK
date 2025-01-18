@@ -74,6 +74,7 @@
           <!-- Submit Button -->
           <div class="text-right">
             <button type="submit" class="btn btn-success">Daftar</button>
+            <a href="{{ route('daftar.index') }}" class="btn btn-secondary">Kembali</a>
           </div>
         </form>
       </div>

@@ -92,40 +92,40 @@ class PasienController extends Controller
         return view('admin.pasien.show', compact('pasien'));  // Return the view with pasien data
     }
 
-    // Proses registrasi pasien
-    public function register(Request $request)
-{
-    // Log input untuk debugging
-    Log::info('Data registrasi pasien diterima: ', $request->all());
+     // Proses registrasi pasien
+     public function register(Request $request)
+     {
+         // Log input untuk debugging
+         Log::info('Data registrasi pasien diterima: ', $request->all());
+ 
+         // Validasi input
+         $request->validate([
+             'nama' => 'required|string|max:255',
+             'alamat' => 'required|string|max:255',
+             'no_ktp' => 'required|numeric|unique:pasien',
+            'no_hp' => 'required|numeric|unique:pasien,no_hp,',
+            // 'no_hp' => 'required|regex:/^(08|62)[0-9]{8,12}$/|unique:pasien', 
+            'no_rm' => 'required|unique:pasien', 
+         ]);
+ 
+         try {
+             // Simpan data ke database
+             Pasien::create($request->all());
+ 
+             // Log keberhasilan
+             Log::info('Data pasien berhasil disimpan.');
+ 
+             // Redirect dengan pesan sukses
+             return redirect()->route('pasien.login')->with('success', 'Registrasi berhasil. Silakan login.');
+         } catch (\Exception $e) {
+             // Log error
+             Log::error('Error saat registrasi pasien: ' . $e->getMessage());
+ 
+             // Redirect dengan pesan error
+             return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()]);
+         }
+     }
 
-    // dd($request->all());
-
-    // Validasi input
-    $request->validate([
-        'nama' => 'required',
-        'alamat' => 'required',
-        'no_ktp' => 'required|numeric|unique:pasien',
-        'no_hp' => 'required',
-        'no_rm' => 'required|unique:pasien',
-    ]);
-
-    try {
-        // Simpan data ke database
-        Pasien::create($request->all());
-
-        // Log keberhasilan
-        Log::info('Data pasien berhasil disimpan.');
-
-        // Redirect dengan pesan sukses
-        return redirect()->route('pasien.login')->with('success', 'Registrasi berhasil. Silakan login.');
-    } catch (\Exception $e) {
-        // Log error
-        Log::error('Error saat registrasi pasien: ' . $e->getMessage());
-
-        // Redirect dengan pesan error
-        return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()]);
-    }
-}
 
 
     // Tampilkan form tambah pasien
@@ -141,7 +141,8 @@ class PasienController extends Controller
             'nama' => 'required',
             'alamat' => 'required',
             'no_ktp' => 'required|numeric|unique:pasien',
-            'no_hp' => 'required',
+            'no_hp' => 'required|numeric|unique:pasien,no_hp,',
+            // 'no_hp' => 'required|regex:/^(08|62)[0-9]{8,12}$/|unique:pasien', 
             'no_rm' => 'required|unique:pasien',
         ]);
     
@@ -149,6 +150,7 @@ class PasienController extends Controller
     
         return redirect()->route('admin.pasien.index')->with('success', 'Pasien berhasil ditambahkan.');
     }
+    
     
 
     // Tampilkan form edit pasien
@@ -159,39 +161,41 @@ class PasienController extends Controller
 
     // Update data pasien pada admin
     public function update(Request $request, Pasien $pasien)
-{
-    // Validasi input
-    $request->validate([
-        'nama' => 'required',
-        'alamat' => 'required',
-        'no_ktp' => 'required|numeric|unique:pasien,no_ktp,' . $pasien->id, // pastikan id pasien sudah ada dalam url
-        'no_hp' => 'required',
-        'no_rm' => 'required|unique:pasien,no_rm,' . $pasien->id, // pastikan id pasien sudah ada dalam url
-    ]);
+    {
+        // Validasi input
+        $request->validate([
+            'nama' => 'required',
+            'alamat' => 'required',
+            'no_ktp' => 'required|numeric|unique:pasien,no_ktp,' . $pasien->id, 
+            'no_hp' => 'required|numeric|unique:pasien,no_hp,' . $pasien->id, 
+            // 'no_hp' => 'required|regex:/^(08|62)[0-9]{8,12}$/|unique:pasien,no_hp,' . $pasien->id,
+            'no_rm' => 'required|unique:pasien,no_rm,' . $pasien->id, 
+        ]);
     
-    // Log data setelah validasi berhasil
-    Log::info('Validasi berhasil, data yang akan diupdate:', $request->all());
+        // Log data setelah validasi berhasil
+        Log::info('Validasi berhasil, data yang akan diupdate:', $request->all());
     
-    try {
-        // Pilih field yang akan diupdate, hanya yang relevan saja
-        $updatedData = $request->only(['nama', 'alamat', 'no_ktp', 'no_hp', 'no_rm']);
-        
-        // Proses update data pasien
-        $isUpdated = $pasien->update($updatedData);
-        
-        // Debugging untuk melihat apakah update berhasil
-        if ($isUpdated) {
-            Log::info('Data pasien berhasil diupdate:', $updatedData);
-            return redirect()->route('admin.pasien.index', $pasien->id)->with('success', 'Data pasien berhasil diupdate.');
-        } else {
-            return back()->withErrors(['error' => 'Gagal memperbarui data pasien.']);
+        try {
+            // Pilih field yang akan diupdate, hanya yang relevan saja
+            $updatedData = $request->only(['nama', 'alamat', 'no_ktp', 'no_hp', 'no_rm']);
+    
+            // Proses update data pasien
+            $isUpdated = $pasien->update($updatedData);
+    
+            // Debugging untuk melihat apakah update berhasil
+            if ($isUpdated) {
+                Log::info('Data pasien berhasil diupdate:', $updatedData);
+                return redirect()->route('admin.pasien.index', $pasien->id)->with('success', 'Data pasien berhasil diupdate.');
+            } else {
+                return back()->withErrors(['error' => 'Gagal memperbarui data pasien.']);
+            }
+        } catch (\Exception $e) {
+            // Tangani error jika terjadi masalah saat update
+            Log::error('Error saat mengupdate data pasien: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data pasien.']);
         }
-    } catch (\Exception $e) {
-        // Tangani error jika terjadi masalah saat update
-        Log::error('Error saat mengupdate data pasien: ' . $e->getMessage());
-        return back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data pasien.']);
     }
-}
+    
 
     
 
